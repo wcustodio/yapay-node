@@ -7,14 +7,21 @@ Biblioteca de integração do intermediador Yapay para Node.js
 
 ## Como Usar
 
-### Criar objeto
-Para criar o objeto principal, informe o token de cliente nos parâmetros do construtor. Opcionalmente, é possível habilitar o modo sandbox
+### Configuração
+Para configurar o objeto, informe o token de cliente nos parâmetros do construtor. Opcionalmente, é possível habilitar o modo sandbox
 
 ```javascript
-var Yapay = require('yapay-node');
+const Yapay = require('yapay-node');
 
-var yapay = new Yapay({
+let yapay = new Yapay({
    token: 'ABCDEFGH12345678ABCDEFGH12345678',
    sandbox: true //opcional, default = false
 })
+```
+
+### Simular Parcelamento
+```javascript
+yapay.simulateSplitting(value, (err, data) => {
+
+});
 ```
