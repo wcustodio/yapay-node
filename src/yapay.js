@@ -7,7 +7,7 @@ const yapay = function(params) {
 
     switch (this.mode) {
         case 'prod': this.url = 'http://api.intermediador.yapay.com.br/v1'; break;
-        case 'sandbox': this.url = 'https://api.intermediador.sandbox.yapay.com.br/v1'; break;
+        case 'sandbox': this.url = 'https://api.intermediador.sandbox.yapay.com.br/v1'; break;        
     }
 }
 
@@ -16,9 +16,9 @@ yapay.prototype.simulateSplitting = function(value, cb) {
         url: this.url + '/transactions/simulate_splitting',
         json: {
             token_account: this.token,
-            price: value
+            price: value.toString()
         }
-    }    
+    }
 
     request.post(options, function(err, response, body) {
         if (err) {
