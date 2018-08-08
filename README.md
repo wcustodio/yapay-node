@@ -25,3 +25,11 @@ yapay.simulateSplitting(value, (err, data) => {
 
 });
 ```
+
+### Consultar Cliente
+Faz consulta do cliente a partir do CPF ou e-mail
+```javascript
+yapay.getPerson({ email: String, cpf: String}, (err, data) => {
+
+})
+```
