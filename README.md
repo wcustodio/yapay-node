@@ -27,9 +27,66 @@ yapay.simulateSplitting(value, (err, data) => {
 ```
 
 ### Consultar Cliente
-Faz consulta do cliente a partir do CPF ou e-mail
+Faz a consulta do cliente a partir do CPF ou e-mail
 ```javascript
 yapay.getPerson({ email: String, cpf: String}, (err, data) => {
+
+})
+```
+
+### Enviar Transação
+Para envio da transação com cartão de crédito, é preciso setar alguns dados obrigatórios:
+
+#### Definir Cliente
+```javascript
+yapay.setCustomer({
+    email: String,
+    name: String,
+    cpf: String,
+    phone_number: String
+});
+```
+
+#### Definir Endereço
+```javascript
+yapay.setAddress({
+    type_address: String, //'B' para Entrega, 'D' para Cobrança
+    postal_code: String,
+    street: String,
+    number: String,
+    neighborhood: String,
+    city: String,
+    state: String
+})
+```
+
+#### Definir Dados de Entrega
+```javascript
+yapay.setShipping({
+    price: Number,
+    type: String
+})
+```
+
+#### Adicionar Produto
+```javascript
+yapay.addProduct({
+    description: String,
+    quantity: Number,
+    price: Number
+})
+```
+
+#### Enviar Transação
+```javascript
+yapay.payment({
+    card_number: String,
+    card_name: String,
+    card_expire_month: String,
+    card_expire_year: String,
+    card_cvv: String,
+    split: Number
+}, (err, result) => {
 
 })
 ```
