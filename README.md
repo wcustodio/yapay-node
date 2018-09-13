@@ -15,7 +15,8 @@ const Yapay = require('yapay-node');
 
 let yapay = new Yapay({
    token: 'ABCDEFGH12345678ABCDEFGH12345678',
-   sandbox: true //opcional, default = false
+   sandbox: true, //opcional, default = false
+   reseller: 'ABCDEFGH12345678ABCDEFGH12345678' //opcional
 })
 ```
 

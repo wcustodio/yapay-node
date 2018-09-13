@@ -3,6 +3,7 @@ const xmlParser = require('xml2json');
 
 const yapay = function(params) {
     this.token = params.token;
+    this.reseller_token = params.reseller;
     this.mode = params.sandbox == true ? 'sandbox' : 'prod';
 
     switch (this.mode) {
@@ -129,6 +130,9 @@ yapay.prototype.payment = function(params, cb) {
     }
 
     this.transaction_data.token_account = this.token;
+    if (this.reseller_token) {
+        this.transaction_data.reseller_token = this.reseller_token;
+    }
 
     this.transaction_data.payment = {
         payment_method_id: getPaymentMethodId(params.card_number),
