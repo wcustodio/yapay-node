@@ -90,3 +90,10 @@ yapay.payment({
 
 })
 ```
+
+#### Cancelar Transação
+```javascript
+yapay.cancelTransaction(transaction_id, (err, result) => {
+
+})
+```
