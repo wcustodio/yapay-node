@@ -98,3 +98,10 @@ yapay.cancelTransaction(transaction_id, (err, result) => {
 
 })
 ```
+
+#### Consultar Transação
+```javascript
+yapay.getTransaction(token_transaction, (err, result) => {
+
+})
+```

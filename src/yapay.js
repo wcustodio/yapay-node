@@ -185,6 +185,24 @@ yapay.prototype.cancelTransaction = function(transaction_id, cb) {
     })
 }
 
+yapay.prototype.getTransaction = function(token_transaction, cb) {
+    const options = {
+        url: this.url + '/v3/transactions/get_by_token?token_account=' + this.token + '&token_transaction=' + token_transaction
+    }    
+
+    request.get(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            if (body.message_response.message == 'error') {
+                return cb(body.error_response, false);
+            } else if (body.message_response.message == 'success') {
+                return cb(false, body.data_response);
+            }
+        }
+    })
+}
+
 function getPaymentMethodId(card_number) {
     //amex
     if (card_number.substring(0, 2) == '34' || card_number.substring(0, 2) == '37') {
