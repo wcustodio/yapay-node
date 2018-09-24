@@ -4,6 +4,7 @@ const xmlParser = require('xml2json');
 const yapay = function(params) {
     this.token = params.token;
     this.reseller_token = params.reseller;
+    this.access_token = '';
     this.mode = params.sandbox == true ? 'sandbox' : 'prod';
 
     switch (this.mode) {
@@ -166,7 +167,7 @@ yapay.prototype.cancelTransaction = function(transaction_id, cb) {
     const options = {
         url: this.url + '/v3/transactions/cancel',
         json: {
-            access_token: this.token,
+            access_token: this.access_token,
             transaction_id: Number(transaction_id),
             reason_cancellation_id: '6'
         }
@@ -190,6 +191,28 @@ yapay.prototype.getTransaction = function(token_transaction, cb) {
         url: this.url + '/v3/transactions/get_by_token?token_account=' + this.token + '&token_transaction=' + token_transaction
     }    
 
+    request.get(options, (err, response, body) => { 
+        if (err) {
+            return cb(err, false);
+        } else {
+            body = JSON.parse(body);
+            if (body.message_response.message == 'error') {
+                return cb(body.error_response, false);
+            } else if (body.message_response.message == 'success') {
+                return cb(false, body.data_response);
+            }
+        }
+    })
+}
+
+yapay.prototype.getSales = function(cb) {
+    const options = {
+        url: this.url + '/v3/sales',
+        headers: {
+            'Authorization': 'Token token=' + this.access_token + ', type=access_token'
+        }
+    }
+
     request.get(options, (err, response, body) => {
         if (err) {
             return cb(err, false);
@@ -197,6 +220,56 @@ yapay.prototype.getTransaction = function(token_transaction, cb) {
             if (body.message_response.message == 'error') {
                 return cb(body.error_response, false);
             } else if (body.message_response.message == 'success') {
+                return cb(false, body.data_response);
+            }
+        }
+    })
+}
+
+yapay.prototype.createResellerCode = function(consumer_key, consumer_secret, cb) {
+    const options = {
+        url: this.url + '/v1/reseller/authorizations/create',
+        json: {
+            consumer_key: consumer_key,
+            consumer_secret: consumer_secret,
+            reseller_token: this.reseller_token,
+            token_account: this.token,
+            type_response: "J"
+        }
+    }
+
+    request.post(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            if (body.message_response.message == 'error') {
+                return cb(body.error_response, false);
+            } else if (body.message_response.message == 'success') {
+                return cb(false, body.data_response);
+            }
+        }
+    })
+}
+
+yapay.prototype.generateAccessToken = function(consumer_key, consumer_secret, code, cb) {
+    const options = {
+        url: this.url + '/v1/authorizations/access_token',
+        json: {
+            consumer_key: consumer_key,
+            consumer_secret: consumer_secret,
+            code: code,
+            type_response: "J"
+        }
+    }
+
+    request.post(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            if (body.message_response.message == 'error') {
+                return cb(body.error_response, false);
+            } else if (body.message_response.message == 'success') {
+                this.access_token = body.data_response.authorization.access_token;
                 return cb(false, body.data_response);
             }
         }
