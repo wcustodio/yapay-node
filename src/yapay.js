@@ -76,6 +76,59 @@ yapay.prototype.getPerson = function(params, cb) {
     })
 }
 
+yapay.prototype.createPeople = function(params, cb) {
+    let json = {
+        account_type: params.account_type,
+        email: params.email,
+        name: params.name,
+        cpf: params.cpf.replace(/[^0-9]/g, ""),
+        street: params.street,
+        number: params.number,
+        neighborhood: params.neighborhood,
+        postal_code: params.postal_code.replace(/[^0-9]/g, ""),
+        city: params.city,
+        state: params.state,
+        type_address: 'D',
+        contacts: []
+    };
+
+    if (params.account_type == '1') {
+        json.cpf = params.cpf.replace(/[^0-9]/g, "");
+    } else if (params.account_type == '2') {
+        json.trade_name = params.trade_name;
+        json.company_name = params.company_name;
+        json.name = params.company_name;
+        json.cnpj = params.cnpj.replace(/[^0-9]/g, "");
+        json.contacts.push({
+            type_contact: 'W',
+            number_contact: params.phone_number.replace(/[^0-9]/g, "")
+        })
+    }
+
+    if (this.reseller_token) {
+        json.reseller_token = this.reseller_token;
+    }
+
+    const options = {
+        url: this.url + '/v1/people/create',
+        json: json
+    }
+
+    request.post(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            const json = JSON.parse(xmlParser.toJson(body));
+
+            if (json.people.message_response.message == 'error') {
+                return cb(json.people.error_response, false);
+            } else if (json.people.message_response.message == 'success') {
+                return cb(false, json.people.data_response);
+            }
+        }
+    })
+}
+
 yapay.prototype.addProduct = function(item) {
     this.transaction_data.transaction_product.push({
         description: item.description,
