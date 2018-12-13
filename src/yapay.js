@@ -76,6 +76,30 @@ yapay.prototype.getPerson = function(params, cb) {
     })
 }
 
+yapay.prototype.getPeopleByReseller = function(email, cb) {
+    const options = {
+        url: this.url + '/v1/people/get_by_reseller',
+        json: {
+            email: email,
+            reseller_token: this.reseller_token
+        }
+    }
+
+    request.post(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            const json = JSON.parse(xmlParser.toJson(body));
+
+            if (json.people.message_response.message == 'error') {
+                return cb(json.people.error_response, false);
+            } else if (json.people.message_response.message == 'success') {
+                return cb(false, json.people.data_response);
+            }
+        }
+    })
+}
+
 yapay.prototype.createPeople = function(params, cb) {
     let json = {
         account_type: params.account_type,
