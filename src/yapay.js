@@ -150,6 +150,75 @@ yapay.prototype.searchBankAccount = function(access_token, cb) {
     })
 }
 
+yapay.prototype.getBalance = function(access_token, cb) {
+    const options = {
+        url: this.url + '/v3/balance',
+        headers: {
+            'Authorization': 'Token token=' + access_token + ', type=access_token'
+        }
+    }
+
+    request.get(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            const json = JSON.parse(body);
+            return cb(false, json);
+        }
+    })
+}
+
+yapay.prototype.transfer = function(access_token, seller_cpf, seller_email, value, cb) {
+    const options = {
+        url: this.url + '/v1/transactions/transfer',
+        json: {
+            access_token: access_token,
+            seller_cpf: seller_cpf.replace(/[^0-9]/g, ""),
+            seller_email: seller_email,
+            transfer_value: value
+        }
+    }
+
+    request.post(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            const json = JSON.parse(xmlParser.toJson(body));
+
+            if (json.transaction.message_response.message == 'error') {
+                return cb(json.transaction.error_response, false);
+            } else if (json.transaction.message_response.message == 'success') {
+                return cb(false, json.transaction.data_response);
+            }
+        }
+    })
+}
+
+yapay.prototype.withdraws = function(access_token, bank_account_id, value, cb) {
+    const options = {
+        url: this.url + '/v1/withdraws/create',
+        json: {
+            access_token: access_token,
+            bank_account_id: bank_account_id,
+            cash_value: value
+        }
+    }
+
+    request.post(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            const json = JSON.parse(xmlParser.toJson(body));
+
+            if (json.withdraw.message_response.message == 'error') {
+                return cb(json.withdraw.error_response, false);
+            } else if (json.withdraw.message_response.message == 'success') {
+                return cb(false, json.withdraw.data_response);
+            }
+        }
+    })
+}
+
 yapay.prototype.createPeople = function(params, cb) {
     let json = {
         account_type: params.account_type,
