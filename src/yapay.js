@@ -345,6 +345,10 @@ yapay.prototype.setShipping = function(shipping) {
     this.transaction_data.transaction.shipping_type = shipping.type;
 }
 
+yapay.prototype.setDiscount = function(discount_value) {
+    this.transaction_data.transaction.price_discount = discount_value;
+}
+
 yapay.prototype.payment = function(params, cb) {
     let url;
     switch (this.mode) {

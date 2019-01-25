@@ -69,6 +69,11 @@ yapay.setShipping({
 })
 ```
 
+#### Atribuir Valor de Desconto
+```javascript
+yapay.setDiscount(Number)
+```
+
 #### Adicionar Produto
 ```javascript
 yapay.addProduct({
