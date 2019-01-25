@@ -219,6 +219,32 @@ yapay.prototype.withdraws = function(access_token, bank_account_id, value, cb) {
     })
 }
 
+yapay.prototype.getWithdraw = function(access_token, withdraw_id, cb) {
+    const options = {
+        url: this.url + '/v1/withdraws/get',
+        json: {
+            access_token: access_token,
+            withdraw_id: withdraw_id
+        }
+    }
+
+    request.post(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            const json = JSON.parse(xmlParser.toJson(body));
+
+            console.log(json);
+
+            if (json.withdraw.message_response.message == 'error') {
+                return cb(json.withdraw.error_response, false);
+            } else if (json.withdraw.message_response.message == 'success') {
+                return cb(false, json.withdraw.data_response);
+            }
+        }
+    })
+}
+
 yapay.prototype.createPeople = function(params, cb) {
     let json = {
         account_type: params.account_type,
