@@ -3,8 +3,8 @@ const xmlParser = require('xml2json');
 
 const yapay = function(params) {
     this.token = params.token;
-    this.reseller_token = params.reseller;
-    this.access_token = '';
+    this.resellerToken = params.reseller;
+    this.accessToken = '';
     this.mode = params.sandbox === true ? 'sandbox' : 'prod';
 
     switch (this.mode) {
@@ -12,8 +12,8 @@ const yapay = function(params) {
         case 'sandbox': this.url = 'https://api.intermediador.sandbox.yapay.com.br'; break;        
     }
 
-    this.transaction_data = {
-        transaction_product: [],
+    this.transactionData = {
+        transactionProduct: [],
         transaction: {},
         payment: {},
         customer: {
@@ -53,7 +53,7 @@ yapay.prototype.getPerson = function(params, cb) {
         json.email = params.email
     }
     if (params.cpf) {
-        json.cpf = params.cpf
+        json.cpf = params.cpf;
     }
 
     const options = {
@@ -81,7 +81,7 @@ yapay.prototype.getPeopleByReseller = function(email, cb) {
         url: this.url + '/v1/people/get_by_reseller',
         json: {
             email: email,
-            reseller_token: this.reseller_token
+            reseller_token: this.resellerToken
         }
     }
 
@@ -100,11 +100,11 @@ yapay.prototype.getPeopleByReseller = function(email, cb) {
     })
 }
 
-yapay.prototype.createBankAccount = function(params, access_token, cb) {
+yapay.prototype.createBankAccount = function(params, accessToken, cb) {
     const options = {
         url: this.url + '/v1/bank_accounts/create',
         json: {
-            access_token: access_token,
+            access_token: accessToken,
             bank_code: params.bank_code,
             agency: params.agency,
             account: params.account,
@@ -127,11 +127,11 @@ yapay.prototype.createBankAccount = function(params, access_token, cb) {
     })
 }
 
-yapay.prototype.searchBankAccount = function(access_token, cb) {
+yapay.prototype.searchBankAccount = function(accessToken, cb) {
     const options = {
         url: this.url + '/v1/bank_accounts/search',
         json: {
-            access_token: access_token
+            access_token: accessToken
         }
     }
 
@@ -150,11 +150,11 @@ yapay.prototype.searchBankAccount = function(access_token, cb) {
     })
 }
 
-yapay.prototype.getBalance = function(access_token, cb) {
+yapay.prototype.getBalance = function(accessToken, cb) {
     const options = {
         url: this.url + '/v3/balance',
         headers: {
-            'Authorization': 'Token token=' + access_token + ', type=access_token'
+            Authorization: `Token token=${accessToken}, type=access_token`
         }
     }
 
@@ -168,13 +168,13 @@ yapay.prototype.getBalance = function(access_token, cb) {
     })
 }
 
-yapay.prototype.transfer = function(access_token, seller_cpf, seller_email, value, cb) {
+yapay.prototype.transfer = function(accessToken, sellerCpf, sellerEmail, value, cb) {
     const options = {
         url: this.url + '/v1/transactions/transfer',
         json: {
-            access_token: access_token,
-            seller_cpf: seller_cpf.replace(/[^0-9]/g, ""),
-            seller_email: seller_email,
+            access_token: accessToken,
+            seller_cpf: sellerCpf.replace(/[^0-9]/g, ""),
+            seller_email: sellerEmail,
             transfer_value: value
         }
     }
@@ -194,12 +194,12 @@ yapay.prototype.transfer = function(access_token, seller_cpf, seller_email, valu
     })
 }
 
-yapay.prototype.withdraws = function(access_token, bank_account_id, value, cb) {
+yapay.prototype.withdraws = function(accessToken, bankAccountId, value, cb) {
     const options = {
         url: this.url + '/v1/withdraws/create',
         json: {
-            access_token: access_token,
-            bank_account_id: bank_account_id,
+            access_token: accessToken,
+            bank_account_id: bankAccountId,
             cash_value: value
         }
     }
@@ -219,11 +219,11 @@ yapay.prototype.withdraws = function(access_token, bank_account_id, value, cb) {
     })
 }
 
-yapay.prototype.getWithdraw = function(access_token, withdraw_id, cb) {
+yapay.prototype.getWithdraw = function(accessToken, withdraw_id, cb) {
     const options = {
         url: this.url + '/v1/withdraws/get',
         json: {
-            access_token: access_token,
+            access_token: accessToken,
             withdraw_id: withdraw_id
         }
     }
@@ -274,8 +274,8 @@ yapay.prototype.createPeople = function(params, cb) {
         })
     }
 
-    if (this.reseller_token) {
-        json.reseller_token = this.reseller_token;
+    if (this.resellerToken) {
+        json.reseller_token = this.resellerToken;
     }
 
     const options = {
@@ -299,7 +299,7 @@ yapay.prototype.createPeople = function(params, cb) {
 }
 
 yapay.prototype.addProduct = function(item) {
-    this.transaction_data.transaction_product.push({
+    this.transactionData.transactionProduct.push({
         description: item.description,
         quantity: item.quantity,
         price_unit: item.price
@@ -307,21 +307,21 @@ yapay.prototype.addProduct = function(item) {
 }
 
 yapay.prototype.setCustomer = function(customer) {
-    this.transaction_data.customer.email = customer.email;
+    this.transactionData.customer.email = customer.email;
     if (customer.name) {
-        this.transaction_data.customer.name = customer.name;
+        this.transactionData.customer.name = customer.name;
     }
 
     if (customer.birth_date) {
-        this.transaction_data.customer.birth_date = customer.birth_date;
+        this.transactionData.customer.birth_date = customer.birth_date;
     }
 
     if (customer.cpf) {
-        this.transaction_data.customer.cpf = customer.cpf;
+        this.transactionData.customer.cpf = customer.cpf;
     }
 
     if (customer.phone_number) {
-        this.transaction_data.customer.contacts.push({
+        this.transactionData.customer.contacts.push({
             type_contact: 'M',
             number_contact: customer.phone_number
         })
@@ -329,7 +329,7 @@ yapay.prototype.setCustomer = function(customer) {
 }
 
 yapay.prototype.setAddress = function(address) {
-    this.transaction_data.customer.addresses.push({
+    this.transactionData.customer.addresses.push({
         type_address: address.type_address,
         postal_code: address.postal_code,
         street: address.street,
@@ -341,12 +341,12 @@ yapay.prototype.setAddress = function(address) {
 }
 
 yapay.prototype.setShipping = function(shipping) {
-    this.transaction_data.transaction.shipping_price = shipping.price;
-    this.transaction_data.transaction.shipping_type = shipping.type;
+    this.transactionData.transaction.shipping_price = shipping.price;
+    this.transactionData.transaction.shipping_type = shipping.type;
 }
 
 yapay.prototype.setDiscount = function(discount_value) {
-    this.transaction_data.transaction.price_discount = discount_value;
+    this.transactionData.transaction.price_discount = discount_value;
 }
 
 yapay.prototype.payment = function(params, cb) {
@@ -356,12 +356,12 @@ yapay.prototype.payment = function(params, cb) {
         case 'sandbox': url = 'https://api.intermediador.sandbox.yapay.com.br/api/v3/transactions/payment'; break;
     }
 
-    this.transaction_data.token_account = this.token;
-    if (this.reseller_token) {
-        this.transaction_data.reseller_token = this.reseller_token;
+    this.transactionData.token_account = this.token;
+    if (this.resellerToken) {
+        this.transactionData.reseller_token = this.resellerToken;
     }
 
-    this.transaction_data.payment = {
+    this.transactionData.payment = {
         payment_method_id: getPaymentMethodId(params.card_number),
         card_number: params.card_number,
         card_name: params.card_name,
@@ -373,7 +373,7 @@ yapay.prototype.payment = function(params, cb) {
 
     const options = {
         url: this.url + '/v3/transactions/payment',
-        json: this.transaction_data
+        json: this.transactionData
     }    
 
     request.post(options, (err, response, body) => {
@@ -389,12 +389,12 @@ yapay.prototype.payment = function(params, cb) {
     })
 }
 
-yapay.prototype.cancelTransaction = function(transaction_id, cb) {
+yapay.prototype.cancelTransaction = function(transactionId, cb) {
     const options = {
         url: this.url + '/v3/transactions/cancel',
         json: {
-            access_token: this.access_token,
-            transaction_id: Number(transaction_id),
+            access_token: this.accessToken,
+            transaction_id: Number(transactionId),
             reason_cancellation_id: '6'
         }
     }    
@@ -435,7 +435,7 @@ yapay.prototype.getSales = function(cb) {
     const options = {
         url: this.url + '/v3/sales',
         headers: {
-            'Authorization': 'Token token=' + this.access_token + ', type=access_token'
+            Authorization: `Token token=${this.accessToken}, type=access_token`
         }
     }
 
@@ -452,13 +452,13 @@ yapay.prototype.getSales = function(cb) {
     })
 }
 
-yapay.prototype.createResellerCode = function(consumer_key, consumer_secret, cb) {
+yapay.prototype.createResellerCode = function(consumerKey, consumerSecret, cb) {
     const options = {
         url: this.url + '/v1/reseller/authorizations/create',
         json: {
-            consumer_key: consumer_key,
-            consumer_secret: consumer_secret,
-            reseller_token: this.reseller_token,
+            consumer_key: consumerKey,
+            consumer_secret: consumerSecret,
+            reseller_token: this.resellerToken,
             token_account: this.token,
             type_response: "J"
         }
@@ -477,13 +477,13 @@ yapay.prototype.createResellerCode = function(consumer_key, consumer_secret, cb)
     })
 }
 
-yapay.prototype.createResellerCodeWithToken = function(consumer_key, consumer_secret, token, cb) {
+yapay.prototype.createResellerCodeWithToken = function(consumerKey, consumerSecret, token, cb) {
     const options = {
         url: this.url + '/v1/reseller/authorizations/create',
         json: {
-            consumer_key: consumer_key,
-            consumer_secret: consumer_secret,
-            reseller_token: this.reseller_token,
+            consumer_key: consumerKey,
+            consumer_secret: consumerSecret,
+            reseller_token: this.resellerToken,
             token_account: token,
             type_response: "J"
         }
@@ -520,7 +520,7 @@ yapay.prototype.generateAccessToken = function(consumer_key, consumer_secret, co
             if (body.message_response.message === 'error') {
                 return cb(body.error_response, false);
             } else if (body.message_response.message === 'success') {
-                this.access_token = body.data_response.authorization.access_token;
+                this.accessToken = body.data_response.authorization.access_token;
                 return cb(false, body.data_response);
             }
         }
