@@ -1,4 +1,3 @@
-
 # yapay-node
 Biblioteca de integração do intermediador Yapay para Node.js
 
@@ -35,8 +34,8 @@ yapay.getPerson({ email: String, cpf: String}, (err, data) => {
 })
 ```
 
-### Enviar Transação
-Para envio da transação com cartão de crédito, é preciso setar alguns dados obrigatórios:
+### Processar Transação
+Para envio da transação com cartão de crédito, é preciso definir alguns dados obrigatórios:
 
 #### Definir Cliente
 ```javascript

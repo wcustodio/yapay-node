@@ -5,7 +5,7 @@ const yapay = function(params) {
     this.token = params.token;
     this.reseller_token = params.reseller;
     this.access_token = '';
-    this.mode = params.sandbox == true ? 'sandbox' : 'prod';
+    this.mode = params.sandbox === true ? 'sandbox' : 'prod';
 
     switch (this.mode) {
         case 'prod': this.url = 'https://api.intermediador.yapay.com.br'; break;
@@ -38,9 +38,9 @@ yapay.prototype.simulateSplitting = function(value, cb) {
         } else {
             const json = JSON.parse(xmlParser.toJson(body));
 
-            if (json.transaction.message_response.message == 'error') {
+            if (json.transaction.message_response.message === 'error') {
                 return cb(json.transaction.error_response, false);
-            } else if (json.transaction.message_response.message == 'success') {
+            } else if (json.transaction.message_response.message === 'success') {
                 return cb(false, json.transaction.data_response);
             }
         }
@@ -67,9 +67,9 @@ yapay.prototype.getPerson = function(params, cb) {
         } else {
             const json = JSON.parse(xmlParser.toJson(body));
 
-            if (json.people.message_response.message == 'error') {
+            if (json.people.message_response.message === 'error') {
                 return cb(json.people.error_response, false);
-            } else if (json.people.message_response.message == 'success') {
+            } else if (json.people.message_response.message === 'success') {
                 return cb(false, json.people.data_response);
             }
         }
@@ -91,9 +91,9 @@ yapay.prototype.getPeopleByReseller = function(email, cb) {
         } else {
             const json = JSON.parse(xmlParser.toJson(body));
 
-            if (json.people.message_response.message == 'error') {
+            if (json.people.message_response.message === 'error') {
                 return cb(json.people.error_response, false);
-            } else if (json.people.message_response.message == 'success') {
+            } else if (json.people.message_response.message === 'success') {
                 return cb(false, json.people.data_response);
             }
         }
@@ -118,9 +118,9 @@ yapay.prototype.createBankAccount = function(params, access_token, cb) {
         } else {
             const json = JSON.parse(xmlParser.toJson(body));
 
-            if (json.bank_account.message_response.message == 'error') {
+            if (json.bank_account.message_response.message === 'error') {
                 return cb(json.bank_account.error_response, false);
-            } else if (json.bank_account.message_response.message == 'success') {
+            } else if (json.bank_account.message_response.message === 'success') {
                 return cb(false, json.bank_account.data_response);
             }
         }
@@ -141,9 +141,9 @@ yapay.prototype.searchBankAccount = function(access_token, cb) {
         } else {
             const json = JSON.parse(xmlParser.toJson(body));
 
-            if (json.bank_account.message_response.message == 'error') {
+            if (json.bank_account.message_response.message === 'error') {
                 return cb(json.bank_account.error_response, false);
-            } else if (json.bank_account.message_response.message == 'success') {
+            } else if (json.bank_account.message_response.message === 'success') {
                 return cb(false, json.bank_account.data_response);
             }
         }
@@ -185,9 +185,9 @@ yapay.prototype.transfer = function(access_token, seller_cpf, seller_email, valu
         } else {
             const json = JSON.parse(xmlParser.toJson(body));
 
-            if (json.transaction.message_response.message == 'error') {
+            if (json.transaction.message_response.message === 'error') {
                 return cb(json.transaction.error_response, false);
-            } else if (json.transaction.message_response.message == 'success') {
+            } else if (json.transaction.message_response.message === 'success') {
                 return cb(false, json.transaction.data_response);
             }
         }
@@ -210,9 +210,9 @@ yapay.prototype.withdraws = function(access_token, bank_account_id, value, cb) {
         } else {
             const json = JSON.parse(xmlParser.toJson(body));
 
-            if (json.withdraw.message_response.message == 'error') {
+            if (json.withdraw.message_response.message === 'error') {
                 return cb(json.withdraw.error_response, false);
-            } else if (json.withdraw.message_response.message == 'success') {
+            } else if (json.withdraw.message_response.message === 'success') {
                 return cb(false, json.withdraw.data_response);
             }
         }
@@ -236,9 +236,9 @@ yapay.prototype.getWithdraw = function(access_token, withdraw_id, cb) {
 
             console.log(json);
 
-            if (json.withdraw.message_response.message == 'error') {
+            if (json.withdraw.message_response.message === 'error') {
                 return cb(json.withdraw.error_response, false);
-            } else if (json.withdraw.message_response.message == 'success') {
+            } else if (json.withdraw.message_response.message === 'success') {
                 return cb(false, json.withdraw.data_response);
             }
         }
@@ -261,9 +261,9 @@ yapay.prototype.createPeople = function(params, cb) {
         contacts: []
     };
 
-    if (params.account_type == '1') {
+    if (params.account_type === '1') {
         json.cpf = params.cpf.replace(/[^0-9]/g, "");
-    } else if (params.account_type == '2') {
+    } else if (params.account_type === '2') {
         json.trade_name = params.trade_name;
         json.company_name = params.company_name;
         json.name = params.company_name;
@@ -289,9 +289,9 @@ yapay.prototype.createPeople = function(params, cb) {
         } else {
             const json = JSON.parse(xmlParser.toJson(body));
 
-            if (json.people.message_response.message == 'error') {
+            if (json.people.message_response.message === 'error') {
                 return cb(json.people.error_response, false);
-            } else if (json.people.message_response.message == 'success') {
+            } else if (json.people.message_response.message === 'success') {
                 return cb(false, json.people.data_response);
             }
         }
@@ -380,9 +380,9 @@ yapay.prototype.payment = function(params, cb) {
         if (err) {
             return cb(err, false);
         } else {
-            if (body.message_response.message == 'error') {
+            if (body.message_response.message === 'error') {
                 return cb(body.error_response, false);
-            } else if (body.message_response.message == 'success') {
+            } else if (body.message_response.message === 'success') {
                 return cb(false, body.data_response);
             }
         }
@@ -403,9 +403,9 @@ yapay.prototype.cancelTransaction = function(transaction_id, cb) {
         if (err) {
             return cb(err, false);
         } else {
-            if (body.message_response.message == 'error') {
+            if (body.message_response.message === 'error') {
                 return cb(body.error_response, false);
-            } else if (body.message_response.message == 'success') {
+            } else if (body.message_response.message === 'success') {
                 return cb(false, body.data_response);
             }
         }
@@ -422,9 +422,9 @@ yapay.prototype.getTransaction = function(token_transaction, cb) {
             return cb(err, false);
         } else {
             body = JSON.parse(body);
-            if (body.message_response.message == 'error') {
+            if (body.message_response.message === 'error') {
                 return cb(body.error_response, false);
-            } else if (body.message_response.message == 'success') {
+            } else if (body.message_response.message === 'success') {
                 return cb(false, body.data_response);
             }
         }
@@ -443,9 +443,9 @@ yapay.prototype.getSales = function(cb) {
         if (err) {
             return cb(err, false);
         } else {
-            if (body.message_response.message == 'error') {
+            if (body.message_response.message === 'error') {
                 return cb(body.error_response, false);
-            } else if (body.message_response.message == 'success') {
+            } else if (body.message_response.message === 'success') {
                 return cb(false, body.data_response);
             }
         }
@@ -468,9 +468,9 @@ yapay.prototype.createResellerCode = function(consumer_key, consumer_secret, cb)
         if (err) {
             return cb(err, false);
         } else {
-            if (body.message_response.message == 'error') {
+            if (body.message_response.message === 'error') {
                 return cb(body.error_response, false);
-            } else if (body.message_response.message == 'success') {
+            } else if (body.message_response.message === 'success') {
                 return cb(false, body.data_response);
             }
         }
@@ -493,9 +493,9 @@ yapay.prototype.createResellerCodeWithToken = function(consumer_key, consumer_se
         if (err) {
             return cb(err, false);
         } else {
-            if (body.message_response.message == 'error') {
+            if (body.message_response.message === 'error') {
                 return cb(body.error_response, false);
-            } else if (body.message_response.message == 'success') {
+            } else if (body.message_response.message === 'success') {
                 return cb(false, body.data_response);
             }
         }
@@ -517,9 +517,9 @@ yapay.prototype.generateAccessToken = function(consumer_key, consumer_secret, co
         if (err) {
             return cb(err, false);
         } else {
-            if (body.message_response.message == 'error') {
+            if (body.message_response.message === 'error') {
                 return cb(body.error_response, false);
-            } else if (body.message_response.message == 'success') {
+            } else if (body.message_response.message === 'success') {
                 this.access_token = body.data_response.authorization.access_token;
                 return cb(false, body.data_response);
             }
@@ -529,19 +529,19 @@ yapay.prototype.generateAccessToken = function(consumer_key, consumer_secret, co
 
 function getPaymentMethodId(card_number) {
     //amex
-    if (card_number.substring(0, 2) == '34' || card_number.substring(0, 2) == '37') {
+    if (card_number.substring(0, 2) === '34' || card_number.substring(0, 2) === '37') {
         return '5';
     //visa
-    } else if (card_number.substring(0, 1) == '4') {
+    } else if (card_number.substring(0, 1) === '4') {
         return '3';
     //mastercard
-    } else if (card_number.substring(0, 1) == '5') {
+    } else if (card_number.substring(0, 1) === '5') {
         return '4';
     //diners
-    } else if (card_number.substring(0, 3) == '301' || card_number.substring(0, 3) == '305' || card_number.substring(0, 2) == '36' || card_number.substring(0, 2) == '38') {
+    } else if (card_number.substring(0, 3) === '301' || card_number.substring(0, 3) === '305' || card_number.substring(0, 2) === '36' || card_number.substring(0, 2) === '38') {
         return '2';
     //hipercard
-    } else if (card_number.substring(0, 2) == '38' || card_number.substring(0, 2) == '60') {
+    } else if (card_number.substring(0, 2) === '38' || card_number.substring(0, 2) === '60') {
         return '20';
     }
 }
