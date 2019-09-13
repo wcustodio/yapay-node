@@ -1,6 +1,6 @@
 {
     "name": "yapay-node",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "main": "index.js",
     "description": "Biblioteca Node.js para integração com intermediador de pagamentos Yapay",
     "keywords": [
