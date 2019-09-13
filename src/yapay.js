@@ -361,6 +361,10 @@ yapay.prototype.payment = function(params, cb) {
         this.transactionData.reseller_token = this.resellerToken;
     }
 
+    if (params.url_notification) {
+        this.transactionData.transaction.url_notification = params.url_notification;
+    }
+
     this.transactionData.payment = {
         payment_method_id: getPaymentMethodId(params.card_number),
         card_number: params.card_number,
