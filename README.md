@@ -68,6 +68,13 @@ yapay.setShipping({
 })
 ```
 
+#### Definir URL de notificação
+```javascript
+yapay.setUrlNotification({
+    url: String
+})
+```
+
 #### Atribuir Valor de Desconto
 ```javascript
 yapay.setDiscount(Number)

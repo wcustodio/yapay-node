@@ -349,6 +349,10 @@ yapay.prototype.setDiscount = function(discount_value) {
     this.transactionData.transaction.price_discount = discount_value;
 }
 
+yapay.prototype.setUrlNotification = function(url) {
+    this.transactionData.transaction.url_notification = url;
+}
+
 yapay.prototype.payment = function(params, cb) {
     let url;
     switch (this.mode) {
@@ -359,11 +363,7 @@ yapay.prototype.payment = function(params, cb) {
     this.transactionData.token_account = this.token;
     if (this.resellerToken) {
         this.transactionData.reseller_token = this.resellerToken;
-    }
-
-    if (params.url_notification) {
-        this.transactionData.transaction.url_notification = params.url_notification;
-    }
+    }    
 
     this.transactionData.payment = {
         payment_method_id: getPaymentMethodId(params.card_number),
