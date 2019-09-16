@@ -13,7 +13,7 @@ const yapay = function(params) {
     }
 
     this.transactionData = {
-        transactionProduct: [],
+        transaction_product: [],
         transaction: {},
         payment: {},
         customer: {
@@ -299,7 +299,7 @@ yapay.prototype.createPeople = function(params, cb) {
 }
 
 yapay.prototype.addProduct = function(item) {
-    this.transactionData.transactionProduct.push({
+    this.transactionData.transaction_product.push({
         description: item.description,
         quantity: item.quantity,
         price_unit: item.price
