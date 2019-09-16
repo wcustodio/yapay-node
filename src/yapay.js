@@ -393,6 +393,34 @@ yapay.prototype.payment = function(params, cb) {
     })
 }
 
+yapay.prototype.sendBankSlip = function(cb) {
+    this.transactionData.token_account = this.token;
+    if (this.resellerToken) {
+        this.transactionData.reseller_token = this.resellerToken;
+    }    
+
+    this.transactionData.payment = {
+        payment_method_id: '6',
+    }
+
+    const options = {
+        url: this.url + '/v3/transactions/payment',
+        json: this.transactionData
+    }    
+
+    request.post(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            if (body.message_response.message === 'error') {
+                return cb(body.error_response, false);
+            } else if (body.message_response.message === 'success') {
+                return cb(false, body.data_response);
+            }
+        }
+    })
+}
+
 yapay.prototype.cancelTransaction = function(transactionId, cb) {
     const options = {
         url: this.url + '/v3/transactions/cancel',
