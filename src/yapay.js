@@ -127,6 +127,30 @@ yapay.prototype.createBankAccount = function(params, accessToken, cb) {
     })
 }
 
+yapay.prototype.removeBankAccount = function(bankId, accessToken, cb) {
+    const options = {
+        url: this.url + '/v1/bank_accounts/destroy',
+        json: {
+            access_token: accessToken,
+            id: bankId
+        }
+    }
+
+    request.post(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            const json = JSON.parse(xmlParser.toJson(body));
+
+            if (json.bank_account.message_response.message === 'error') {
+                return cb(json.bank_account.error_response, false);
+            } else if (json.bank_account.message_response.message === 'success') {
+                return cb(false, json.bank_account.data_response);
+            }
+        }
+    })
+}
+
 yapay.prototype.searchBankAccount = function(accessToken, cb) {
     const options = {
         url: this.url + '/v1/bank_accounts/search',
