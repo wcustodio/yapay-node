@@ -344,6 +344,12 @@ yapay.prototype.setCustomer = function(customer) {
         this.transactionData.customer.cpf = customer.cpf;
     }
 
+    if (customer.cnpj) {
+        this.transactionData.customer.cnpj = customer.cnpj;
+        this.transactionData.customer.trade_name = customer.trade_name;
+        this.transactionData.customer.company_name = customer.company_name;
+    }
+
     if (customer.phone_number) {
         this.transactionData.customer.contacts.push({
             type_contact: 'M',
