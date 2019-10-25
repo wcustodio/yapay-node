@@ -1,4 +1,5 @@
 const request = require('request');
+const paymentLib = require('payment');
 const xmlParser = require('xml2json');
 
 const yapay = function(params) {
@@ -590,21 +591,22 @@ yapay.prototype.generateAccessToken = function(consumer_key, consumer_secret, co
 }
 
 function getPaymentMethodId(card_number) {
-    //amex
-    if (card_number.substring(0, 2) === '34' || card_number.substring(0, 2) === '37') {
-        return '5';
-    //visa
-    } else if (card_number.substring(0, 1) === '4') {
-        return '3';
-    //mastercard
-    } else if (card_number.substring(0, 1) === '5') {
-        return '4';
-    //diners
-    } else if (card_number.substring(0, 3) === '301' || card_number.substring(0, 3) === '305' || card_number.substring(0, 2) === '36' || card_number.substring(0, 2) === '38') {
-        return '2';
-    //hipercard
-    } else if (card_number.substring(0, 2) === '38' || card_number.substring(0, 2) === '60') {
-        return '20';
+    const paymentMethod = paymentLib.fns.cardType(card_number);
+
+    switch (paymentMethod) {
+        case 'visa': return '3';
+        case 'mastercard': return '4';
+        case 'amex': return '5';
+        case 'discover': return '15';
+        case 'elo': return '16';
+        case 'jcb': return '19';
+        case 'hipercard': return '20';
+        // case 'dinersclub': return '';
+    }
+
+    // aura
+    if (card_number.substring(0, 2) === '50') {
+        return '18';
     }
 }
 
