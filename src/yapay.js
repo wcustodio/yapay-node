@@ -475,6 +475,29 @@ yapay.prototype.cancelTransaction = function(transactionId, cb) {
     })
 }
 
+yapay.prototype.cancelTransactionWithToken = function(accessToken, transactionId, cb) {
+    const options = {
+        url: this.url + '/v3/transactions/cancel',
+        json: {
+            access_token: accessToken,
+            transaction_id: Number(transactionId),
+            reason_cancellation_id: '6'
+        }
+    }    
+
+    request.patch(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            if (body.message_response.message === 'error') {
+                return cb(body.error_response, false);
+            } else if (body.message_response.message === 'success') {
+                return cb(false, body.data_response);
+            }
+        }
+    })
+}
+
 yapay.prototype.getTransaction = function(token_transaction, cb) {
     const options = {
         url: this.url + '/v3/transactions/get_by_token?token_account=' + this.token + '&token_transaction=' + token_transaction
