@@ -394,7 +394,11 @@ yapay.prototype.payment = function(params, cb) {
     this.transactionData.token_account = this.token;
     if (this.resellerToken) {
         this.transactionData.reseller_token = this.resellerToken;
-    }    
+    }
+
+    if (params.finger_print) {
+        this.transactionData.finger_print = params.finger_print;
+    }
 
     this.transactionData.payment = {
         payment_method_id: getPaymentMethodId(params.card_number),
