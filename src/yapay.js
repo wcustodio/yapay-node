@@ -400,6 +400,10 @@ yapay.prototype.payment = function(params, cb) {
         this.transactionData.finger_print = params.finger_print;
     }
 
+    if (params.customer_ip) {
+        this.transactionData.transaction.customer_ip = params.customer_ip;
+    }
+
     this.transactionData.payment = {
         payment_method_id: getPaymentMethodId(params.card_number),
         card_number: params.card_number,
