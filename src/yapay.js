@@ -405,7 +405,7 @@ yapay.prototype.payment = function(params, cb) {
     }
 
     this.transactionData.payment = {
-        payment_method_id: getPaymentMethodId(params.card_number),
+        payment_method_id: params.payment_method_id || getPaymentMethodId(params.card_number),
         card_number: params.card_number,
         card_name: params.card_name,
         card_expdate_month: params.card_expire_month,
