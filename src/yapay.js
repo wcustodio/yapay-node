@@ -6,6 +6,8 @@ const yapay = function(params) {
     this.token = params.token;
     this.resellerToken = params.reseller;
     this.accessToken = '';
+    this.consumerKey = params.consumer_key || '';
+    this.consumerSecret = params.consumer_secret || '';
     this.mode = params.sandbox === true ? 'sandbox' : 'prod';
 
     switch (this.mode) {
@@ -571,6 +573,31 @@ yapay.prototype.createResellerCode = function(consumerKey, consumerSecret, cb) {
     })
 }
 
+yapay.prototype.createResellerCode = function(cb) {
+    const options = {
+        url: this.url + '/v1/reseller/authorizations/create',
+        json: {
+            consumer_key: this.consumerKey,
+            consumer_secret: this.consumerSecret,
+            reseller_token: this.resellerToken,
+            token_account: this.token,
+            type_response: "J"
+        }
+    }
+
+    request.post(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            if (body.message_response.message === 'error') {
+                return cb(body.error_response, false);
+            } else if (body.message_response.message === 'success') {
+                return cb(false, body.data_response);
+            }
+        }
+    })
+}
+
 yapay.prototype.createResellerCodeWithToken = function(consumerKey, consumerSecret, token, cb) {
     const options = {
         url: this.url + '/v1/reseller/authorizations/create',
@@ -602,6 +629,31 @@ yapay.prototype.generateAccessToken = function(consumer_key, consumer_secret, co
         json: {
             consumer_key: consumer_key,
             consumer_secret: consumer_secret,
+            code: code,
+            type_response: "J"
+        }
+    }
+
+    request.post(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            if (body.message_response.message === 'error') {
+                return cb(body.error_response, false);
+            } else if (body.message_response.message === 'success') {
+                this.accessToken = body.data_response.authorization.access_token;
+                return cb(false, body.data_response);
+            }
+        }
+    })
+}
+
+yapay.prototype.generateAccessToken = function(code, cb) {
+    const options = {
+        url: this.url + '/v1/authorizations/access_token',
+        json: {
+            consumer_key: this.consumerKey,
+            consumer_secret: this.consumerSecret,
             code: code,
             type_response: "J"
         }
