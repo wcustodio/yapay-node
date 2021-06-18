@@ -406,14 +406,23 @@ yapay.prototype.payment = function(params, cb) {
         this.transactionData.transaction.customer_ip = params.customer_ip;
     }
 
-    this.transactionData.payment = {
-        payment_method_id: getPaymentMethodId(params.card_number),
-        card_number: params.card_number,
-        card_name: params.card_name,
-        card_expdate_month: params.card_expire_month,
-        card_expdate_year: params.card_expire_year,
-        card_cvv: params.card_cvv,
-        split: params.split || 1
+    if (params.card_token) {
+        this.transactionData.payment = {
+            payment_method_id: getPaymentMethodIdByBrand(params.card_brand),
+            card_token: params.card_token,
+            card_cvv: params.card_cvv,
+            split: params.split || 1
+        }
+    } else {
+        this.transactionData.payment = {
+            payment_method_id: getPaymentMethodId(params.card_number),
+            card_number: params.card_number,
+            card_name: params.card_name,
+            card_expdate_month: params.card_expire_month,
+            card_expdate_year: params.card_expire_year,
+            card_cvv: params.card_cvv,
+            split: params.split || 1
+        }
     }
 
     const options = {
@@ -673,10 +682,71 @@ yapay.prototype.generateAccessToken = function(code, cb) {
     })
 }
 
-function getPaymentMethodId(card_number) {
-    const paymentMethod = paymentLib.fns.cardType(card_number);
+yapay.prototype.createPersonCard = function(params, cb) {
+    const options = {
+        url: this.url + '/v1/person_cards/create',
+        json: {
+            access_token: this.accessToken,
+            payment_method_id: getPaymentMethodId(params.card_number),
+            card_number: params.card_number,
+            card_name: params.card_name,
+            card_expdate_month: params.card_expire_month,
+            card_expdate_year: params.card_expire_year,
+            card_cvv: params.card_cvv,
+        }
+    }
 
-    switch (paymentMethod) {
+    request.post(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            const json = JSON.parse(xmlParser.toJson(body));
+
+            if (json.person_card.message_response.message === 'error') {
+                return cb(json.person_card.error_response, false);
+            } else if (json.person_card.message_response.message === 'success') {
+                return cb(false, json.person_card.data_response);
+            }
+        }
+    })
+}
+
+yapay.prototype.getPersonCard = function(card_token, cb) {
+    const options = {
+        url: this.url + '/v1/person_cards/get',
+        json: {
+            access_token: this.accessToken,
+            card_token,
+        }
+    }
+
+    request.post(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            const json = JSON.parse(xmlParser.toJson(body));
+
+            if (json.person_card.message_response.message === 'error') {
+                return cb(json.person_card.error_response, false);
+            } else if (json.person_card.message_response.message === 'success') {
+                return cb(false, json.person_card.data_response);
+            }
+        }
+    })
+}
+
+function getPaymentMethodId(card_number) {
+    let paymentMethodBrand = paymentLib.fns.cardType(card_number);
+
+    if (!paymentMethodBrand && card_number.substring(0, 2) === '50') {
+        paymentMethodBrand = 'aura';
+    }
+
+    return getPaymentMethodIdByBrand(paymentMethodBrand);;
+}
+
+function getPaymentMethodIdByBrand(card_brand) {
+    switch (card_brand) {
         case 'visa': return '3';
         case 'mastercard': return '4';
         case 'amex': return '5';
@@ -684,13 +754,11 @@ function getPaymentMethodId(card_number) {
         case 'elo': return '16';
         case 'jcb': return '19';
         case 'hipercard': return '20';
+        case 'aura': return '18';
         // case 'dinersclub': return '';
     }
 
-    // aura
-    if (card_number.substring(0, 2) === '50') {
-        return '18';
-    }
+    return '';
 }
 
 module.exports = yapay;
