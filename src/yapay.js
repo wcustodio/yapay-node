@@ -103,6 +103,37 @@ yapay.prototype.getPeopleByReseller = function(email, cb) {
     })
 }
 
+yapay.prototype.getPeopleByReseller = function({ email, cpf }, cb) {
+    const options = {
+        url: this.url + '/v1/people/get_by_reseller',
+        json: {
+            reseller_token: this.resellerToken
+        }
+    }
+
+    if (email) {
+        options.json.email = email;
+    }
+
+    if (cpf) {
+        options.json.cpf = cpf;
+    }
+
+    request.post(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            const json = JSON.parse(xmlParser.toJson(body));
+
+            if (json.people.message_response.message === 'error') {
+                return cb(json.people.error_response, false);
+            } else if (json.people.message_response.message === 'success') {
+                return cb(false, json.people.data_response);
+            }
+        }
+    })
+}
+
 yapay.prototype.createBankAccount = function(params, accessToken, cb) {
     const options = {
         url: this.url + '/v1/bank_accounts/create',
@@ -613,6 +644,31 @@ yapay.prototype.createResellerCodeWithToken = function(consumerKey, consumerSecr
         json: {
             consumer_key: consumerKey,
             consumer_secret: consumerSecret,
+            reseller_token: this.resellerToken,
+            token_account: token,
+            type_response: "J"
+        }
+    }
+
+    request.post(options, (err, response, body) => {
+        if (err) {
+            return cb(err, false);
+        } else {
+            if (body.message_response.message === 'error') {
+                return cb(body.error_response, false);
+            } else if (body.message_response.message === 'success') {
+                return cb(false, body.data_response);
+            }
+        }
+    })
+}
+
+yapay.prototype.createResellerCodeWithToken = function(token, cb) {
+    const options = {
+        url: this.url + '/v1/reseller/authorizations/create',
+        json: {
+            consumer_key: this.consumerKey,
+            consumer_secret: this.consumerSecret,
             reseller_token: this.resellerToken,
             token_account: token,
             type_response: "J"
