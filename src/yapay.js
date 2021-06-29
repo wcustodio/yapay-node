@@ -321,6 +321,10 @@ yapay.prototype.createPeople = function(params, cb) {
 
     if (params.account_type === '1') {
         json.cpf = params.cpf.replace(/[^0-9]/g, "");
+        json.contacts.push({
+            type_contact: 'M',
+            number_contact: params.phone_number.replace(/[^0-9]/g, "")
+        })
     } else if (params.account_type === '2') {
         json.trade_name = params.trade_name;
         json.company_name = params.company_name;
