@@ -2,6 +2,8 @@ const request = require('request');
 const paymentLib = require('payment');
 const xmlParser = require('xml2json');
 
+const PIX_PAYMENT_METHOD = '27';
+
 const yapay = function(params) {
     this.token = params.token;
     this.resellerToken = params.reseller;
@@ -422,12 +424,6 @@ yapay.prototype.setUrlNotification = function(url) {
 }
 
 yapay.prototype.payment = function(params, cb) {
-    let url;
-    switch (this.mode) {
-        case 'prod': url = 'https://api.intermediador.sandbox.yapay.com.br/api/v3/transactions/payment'; break;
-        case 'sandbox': url = 'https://api.intermediador.sandbox.yapay.com.br/api/v3/transactions/payment'; break;
-    }
-
     this.transactionData.token_account = this.token;
     if (this.resellerToken) {
         this.transactionData.reseller_token = this.resellerToken;
@@ -448,7 +444,9 @@ yapay.prototype.payment = function(params, cb) {
             card_cvv: params.card_cvv,
             split: params.split || 1
         }
-    } else {
+    }
+
+    if (params.card_number) {
         this.transactionData.payment = {
             payment_method_id: getPaymentMethodId(params.card_number),
             card_number: params.card_number,
@@ -457,6 +455,13 @@ yapay.prototype.payment = function(params, cb) {
             card_expdate_year: params.card_expire_year,
             card_cvv: params.card_cvv,
             split: params.split || 1
+        }
+    }
+
+    if (params.payment_method === 'pix') {
+        this.transactionData.payment = {
+            payment_method_id: PIX_PAYMENT_METHOD,
+            split: '1',
         }
     }
 

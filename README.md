@@ -89,7 +89,7 @@ yapay.addProduct({
 })
 ```
 
-#### Enviar Transação
+#### Enviar Transação de Cartão
 ```javascript
 yapay.payment({
     card_number: String,
@@ -98,6 +98,15 @@ yapay.payment({
     card_expire_year: String,
     card_cvv: String,
     split: Number
+}, (err, result) => {
+
+})
+```
+
+#### Enviar Transação PIX
+```javascript
+yapay.payment({
+    payment_method: 'pix'
 }, (err, result) => {
 
 })
